@@ -54,7 +54,36 @@ class tcpServer {
     onClose(socket) {
         console.log("onClose", socket.remoteAddress, socket.remotePort);
     }
+    
+    // Distributor接続
+    connectToDistributor(host, post, onNoti) {
+        const packet = {
+            uri: "/distributes",
+            method: "POST",
+            key: 0,
+            params: this.context
+        };
+        const isConnectedDistributor = false;
 
+        this.clientDistributor = new tcpClient(
+            host,
+            port,
+            (options) => {
+                isConnectedDistributor = true;
+                this.clientDistributor.write(packet);
+            },
+            (options, data) => { onNoti(data); },
+            (options) => { isConnectedDistributor = false; },
+            (options) => { isConnectedDistributor = false; }
+        );
+
+        // 周期的なDistributor接続
+        setInterval(() => {
+            if (isConnectedDistributor /= true) {
+                this.clientDistributor.connect();
+            }
+        }, 3000);
+    }
 }
 
 module.exports = tcpServer;
