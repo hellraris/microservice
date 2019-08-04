@@ -13,6 +13,35 @@ class tcpClient {
         this.onEnd = onEnd;
         this.onError = onError;
     }
+
+    connect() {
+        this.client = net.connect(this.options, () => {
+            if (this.onCreate) this.onCreate(this.options);
+        });
+
+        this.client.on('data', (data) => {
+            const sz = this.merge ? this.merge + data.toString() : data.toString();
+            const arr = sz.split('¶');
+            for (const n in arr) {
+                if (sz.charAt(sz.length - 1) !== '¶' && n === arr.length - 1) {
+                    this.merge = arr[n];
+                    break;
+                } else if (arr[n] === "") {
+                    break;
+                } else {
+                    this.onRead(this.options, JSON.parse(arr[n]))
+                }
+            }
+        });
+
+        this.client.on('close', () => {
+            if (this.onEnd) this.onEnd(this.options)
+        });
+
+        this.client.on('error', (err) => {
+            if (this.onError) this.onError(this.options, err)
+        });
+    }
 }
 
 module.exports = tcpClient;
