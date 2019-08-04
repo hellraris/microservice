@@ -79,7 +79,7 @@ class tcpServer {
 
         // 周期的なDistributor接続
         setInterval(() => {
-            if (isConnectedDistributor /= true) {
+            if (isConnectedDistributor !== true) {
                 this.clientDistributor.connect();
             }
         }, 3000);
