@@ -19,6 +19,7 @@ class tcpClient {
             if (this.onCreate) this.onCreate(this.options);
         });
 
+        // データ受信処理
         this.client.on('data', (data) => {
             const sz = this.merge ? this.merge + data.toString() : data.toString();
             const arr = sz.split('¶');
@@ -41,6 +42,11 @@ class tcpClient {
         this.client.on('error', (err) => {
             if (this.onError) this.onError(this.options, err)
         });
+    }
+
+    // データ送信
+    write(packet) {
+        this.client.write(JSON.stringify(packet) + '¶');
     }
 }
 
